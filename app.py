@@ -2,6 +2,7 @@ from flask import Flask, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date, time
 import json
+from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
 
@@ -37,8 +38,6 @@ def records_get():
 
 @app.post('/records')
 def records_post():
-    date_arguments = []
-    time_arguments = []
     date_arguments = request.json['date'].split('-')
     time_arguments = request.json['time'].split(':')
     date_arguments = [int(i) for i in date_arguments]
@@ -58,8 +57,22 @@ def records_post():
 def delete(id):
     record = ActivityRecord.query.get(id)
     if not record:
-        return {'404': 'Not Found'}
+        exception = HTTPException()
+        exception.code = 404
+        exception.description = "Resource not found"
+        return handle_exception(exception)
     else:
         db.session.delete(record)
         db.session.commit()
         return {'200': 'OK'}
+
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    response = e.get_response()
+    response.data = json.dumps({
+        'code': e.code,
+        'name': e.name,
+        'description': e.description
+    })
+    response.content_type = 'application/json'
+    return response
