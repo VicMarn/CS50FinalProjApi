@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func
+from sqlalchemy import func, desc
 from datetime import date, time
 import json
 from werkzeug.exceptions import HTTPException
@@ -25,7 +25,7 @@ def index():
 
 @app.get('/records')
 def records_get():
-    all_records = ActivityRecord.query.all()
+    all_records = ActivityRecord.query.order_by(desc(ActivityRecord.date)).all()
     list_of_records = []
     
     for record in all_records:

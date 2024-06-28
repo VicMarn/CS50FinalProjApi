@@ -30,7 +30,9 @@ Each record is composed of the following data:
 The system uses a client-server architecture, the Android app being the client and a REST API being the server-side.
 The client side is a native Android app, which was developed using Jetpack Compose toolkit and also the third party libraries Retrofit and Coil.
 The server side is a REST API developed with Flask, SQLAlchemy and SQLite for the database.
+
 The client and server communicate through JSON.
+
 All the API's bussiness logic is written inside the app.py file.
 Inside the file, first Flask and the SQLITE database are configured.
 A class called ActivityRecord is defined to model the only table present on the database, activity_record, which has the following fields:
@@ -54,14 +56,14 @@ A class called ActivityRecord is defined to model the only table present on the 
 The api has 4 routes defined, they are:
 - **/**
 - **/records**
-- **/record/<id>**
+- **/record/\<id\>**
 - **/summary**
 
 **/** -> Just redirects to /records
 
 **/records** -> Allows two methods: GET and POST. records_get simply gets all records in the activity_record table, including all the 5 fields. records_post takes the user input via the request object, creates a new ActivityRecord object and stores it in the database. If any type of value exception occurs, the API catches the exception and returns status code 400: Bad Request.
 
-**/records/<id>** -> Allows the DELETE method only. It takes an id input from the user and query the database for a record with that id. If the record is found, it is properly deleted, otherwise the API returns status code 404: Resource not Found.
+**/records/\<id\>** -> Allows the DELETE method only. It takes an id input from the user and query the database for a record with that id. If the record is found, it is properly deleted, otherwise the API returns status code 404: Resource not Found.
 
 **/summary** -> Allows GET method only. The summary route returns three values: number_of_days, which uses func.count method to count the total amount of records in the table. total_distance, which uses func.sum to sum the values from the whole distance column. total_time, which does a calculation to return the total time, in seconds, that the user has spend during the activities. The formula is the following: 3600 * sum(hours) + 60 * sum(minutes) + sum(seconds).
 
